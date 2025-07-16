@@ -273,7 +273,7 @@ namespace Template.Parser.Core
         /// <param name="parentName">Name of the parent resource. Used during recursive call.</param>
         /// <param name="parentType">Type of the parent resource. Used during recursive call.</param>
         /// <param name="parentExpandedPath">Path of the parent resource in the expanded template. Used during the recursive call.</param>
-        private void SaveFlattenedResources(TemplateResource[] resources, string? parentName = null, string? parentType = null, string parentExpandedPath = "")
+        private void SaveFlattenedResources(TemplateResource[] resources, string? parentName = null, string? parentType = null, string? parentLineNumber = null, string parentExpandedPath = "")
         {
             for (int i = 0; i < resources.Length; i++)
             {
@@ -282,7 +282,7 @@ namespace Template.Parser.Core
 
                 if (parentName != null && parentType != null)
                 {
-                    resource.Path = $"{flattenedResources[$"{parentName} {parentType}"].resource.Path}.resources[{i}]";
+                    resource.Path = $"{flattenedResources[$"{parentName} {parentType} {parentLineNumber}"].resource.Path}.resources[{i}]";
 
                     dictionaryKey = $"{parentName}/{resource.Name.Value} {parentType}/{resource.Type.Value}";
                 }
@@ -293,7 +293,7 @@ namespace Template.Parser.Core
                         resource.Path = $"resources[{i}]";
                     }
 
-                    dictionaryKey = $"{resource.Name.Value} {resource.Type.Value}";
+                    dictionaryKey = $"{resource.Name.Value} {resource.Type.Value} {resource.LineNumber}";
                 }
 
                 var resourceExpandedPath = $"{(parentExpandedPath != "" ? parentExpandedPath + "." : "")}resources[{i}]";
@@ -304,7 +304,7 @@ namespace Template.Parser.Core
                     string resourceNamePrefix = parentName == null ? "" : $"{parentName}/";
                     string resourceTypePrefix = parentType == null ? "" : $"{parentType}/";
 
-                    SaveFlattenedResources(resource.Resources, $"{resourceNamePrefix}{resource.Name.Value}", $"{resourceTypePrefix}{resource.Type.Value}", resourceExpandedPath);
+                    SaveFlattenedResources(resource.Resources, $"{resourceNamePrefix}{resource.Name.Value}", $"{resourceTypePrefix}{resource.Type.Value}", $"{resource.LineNumber}", resourceExpandedPath);
                 }
             }
         }
