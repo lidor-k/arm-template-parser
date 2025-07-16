@@ -284,7 +284,19 @@ namespace Template.Parser.Core
                 {
                     resource.Path = $"{flattenedResources[$"{parentName} {parentType} {parentLineNumber}"].resource.Path}.resources[{i}]";
 
-                    dictionaryKey = $"{parentName}/{resource.Name.Value} {parentType}/{resource.Type.Value}";
+                    // If the resource's type includes the parent, trim it to avoid duplication
+                    string resourceType = resource.Type.Value;
+                    string resourceName = resource.Name.Value;
+                    if (!resource.Type.Value.StartsWith(parentType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        resourceType = $"{parentType}/{resourceType}";
+                    }
+                    if (!resource.Name.Value.StartsWith(parentName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        resourceName = $"{parentName}/{resourceName}";
+                    }
+
+                    dictionaryKey = $"{resourceName} {resourceType}";
                 }
                 else
                 {
